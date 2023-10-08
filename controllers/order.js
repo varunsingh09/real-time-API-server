@@ -1,6 +1,5 @@
 import express from 'express'
 import Order from '../models/order'
-import { io } from '../index'
 import QRCode from 'qrcode';
 
 const router = express.Router()
@@ -35,7 +34,7 @@ router.post('/', async (req, res) => {
     const order = new Order(req.body)
     await order.save()
     const orders = await Order.find().sort({ "createdAt": -1 })
-    io.emit('order-added', orders)
+    req.io.emit('order-added', orders)
     res.status(201).send(order)
   } catch (error) {
     res.send(error)
